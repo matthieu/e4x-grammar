@@ -4,10 +4,7 @@
  */
 package uk.co.badgersinfoil.e4x;
 
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.ANTLRReaderStream;
-import org.antlr.runtime.TokenSource;
+import org.antlr.runtime.*;
 
 import java.io.StringReader;
 import java.io.IOException;
@@ -20,6 +17,8 @@ import uk.co.badgersinfoil.e4x.antlr.*;
  * the <i>parseXMLLiteral</i> method for more details.
  */
 public class E4XHelper {
+
+    private E4XExpressionParser expressionParser;
 
     /**
      * Should be called by your main grammar to delegate the parsing to the E4X island grammar. You
@@ -53,7 +52,7 @@ public class E4XHelper {
      * @return the AST as a LinkedListTree
      * @throws RecognitionException
      */
-    public static LinkedListTree parseXMLLiteral(TokenSource lexer, CharStream cs, LinkedListTokenStream stream)
+    public LinkedListTree parseXMLLiteral(TokenSource lexer, CharStream cs, LinkedListTokenStream stream)
             throws RecognitionException {
         String tail = cs.substring(cs.index(), cs.size()-1);
         int initialTailLength = tail.length();
@@ -75,13 +74,13 @@ public class E4XHelper {
         return ast;
     }
 
-    private static E4XParser xmlextParserOn(Reader in, LinkedListTokenStream stream) throws IOException {
+    private E4XParser xmlextParserOn(Reader in, LinkedListTokenStream stream) throws IOException {
         ANTLRReaderStream cs = new ANTLRReaderStream(in);
         E4XLexer lexer = new E4XLexer(cs);
         LinkedListTokenSource source = (LinkedListTokenSource)stream.getTokenSource();
         source.setDelegate(lexer);
 
-        // The AS3 grammar will see the initial '<' as an LT (less-than)
+        // The main grammar will see the initial '<' as an LT (less-than)
         // token, and lookahead in the AS3Parser will have already
         // grabbed references to that token in order to make it the
         // startToken for various AST subtrees, so we can't just delete
@@ -94,10 +93,13 @@ public class E4XHelper {
         stream.seek(stream.index()-1);
 
         E4XParser parser = new E4XParser(stream);
+        if (expressionParser != null) parser.setExpressionParser(expressionParser);
         parser.setTreeAdaptor(new LinkedListTreeAdaptor());
         parser.setInput(lexer, cs);
         return parser;
     }
 
-
+    public void setExpressionParser(E4XExpressionParser expressionParser) {
+        this.expressionParser = expressionParser;
+    }
 }

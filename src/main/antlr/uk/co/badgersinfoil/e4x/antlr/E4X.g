@@ -15,6 +15,7 @@ tokens {
 
 @parser::header {
 package uk.co.badgersinfoil.e4x.antlr;
+import uk.co.badgersinfoil.e4x.E4XExpressionParser;
 }
 @lexer::header {
 package uk.co.badgersinfoil.e4x.antlr;
@@ -38,6 +39,17 @@ package uk.co.badgersinfoil.e4x.antlr;
     public void setInput(E4XLexer lexer, CharStream cs) {
         this.lexer = lexer;
         this.cs = cs;    
+    }
+
+    /** Delegates back to the main grammar (or any other) for expressions. */
+    private E4XExpressionParser expressionParser;
+
+    public void setExpressionParser(E4XExpressionParser p) {
+        expressionParser = p;
+    }
+
+    private LinkedListTree parseSubExpression() throws RecognitionException {
+        return expressionParser.parseSubExpression(lexer, cs, (LinkedListTokenStream)input);
     }
 
     /**
@@ -88,16 +100,11 @@ xmlTagContent
 	;
 
 xmlEmbeddedExpression
-	:	'{' expression '}' -> expression
-	;
-
-// TODO: embed the as3 parser here!
-expression
-	:	(
-			xmlText
-		|	xmlEmbeddedExpression
-		)+
-	;
+@init { LinkedListTree expr = null; }
+	    // We have to have the LT in the outer grammar for lookahead
+		// in here to be able to predict that the expression rule
+		// should be used.
+	:	'{' { expr=parseSubExpression(); } -> { expr };
 
 xmlText
 	:	XML_TEXT | XML_NAME | XML_WS
@@ -143,13 +150,10 @@ XML_WS			:	(' ' | '\t' | '\n' | '\r')+;
 
 XML_NAME		:	XML_NAME_START XML_NAME_PART*;
 
-
 XML_ATTRIBUTE_VALUE
 	:	'\'' ( options {greedy=false;} : . )* '\''
 	|	'"' ( options {greedy=false;} : . )* '"'
 	;
-
-
 
 XML_PI			:	'<?' ( options {greedy=false;} : . )* '?>';
 

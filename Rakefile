@@ -2,7 +2,7 @@ gem "buildr", "~>1.3"
 require "buildr"
 require "buildr/antlr"
 
-VERSION_NUMBER = "0.1"
+VERSION_NUMBER = "0.2"
 ANTLR = "org.antlr:antlr:jar:3.0.1"
 repositories.remote << "http://repo1.maven.org/maven2"
 
