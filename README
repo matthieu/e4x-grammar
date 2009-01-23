@@ -1,0 +1,17 @@
+ANTLR island grammar for E4X support.
+
+Building
+========
+Currently this project only supports Buildr (http://buildr.rubyforge.org/) to compile and create a jar. The Buildr trunk is necessary as ANTLR has only been added recently, to install it just do:
+
+svn co http://www.intalio.org/buildr/trunk buildr
+cd buildr
+rake install
+
+A few dependencies will be required before Buildr can properly install.
+
+Building the E4X grammar and producing a jar is then just:
+
+buildr package
+
+Enjoy!
