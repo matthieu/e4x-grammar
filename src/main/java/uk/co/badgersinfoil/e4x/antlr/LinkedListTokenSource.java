@@ -50,4 +50,8 @@ public class LinkedListTokenSource implements TokenSource {
 	 */
 	public void setLast(LinkedListToken tok) {
 	}
+
+    public String getSourceName() {
+        return delegate.getSourceName();
+    }
 }

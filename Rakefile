@@ -3,8 +3,10 @@ require "buildr"
 require "buildr/antlr"
 
 VERSION_NUMBER = "0.2"
-ANTLR = "org.antlr:antlr:jar:3.0.1"
+ANTLR = "org.antlr:antlr:jar:3.1.1"
 repositories.remote << "http://repo1.maven.org/maven2"
+
+Buildr::ANTLR::REQUIRES = [ANTLR, "org.antlr:stringtemplate:jar:3.2", "antlr:antlr:jar:2.7.7"]
 
 desc "E4X Island Grammar"
 define "e4x-grammar" do

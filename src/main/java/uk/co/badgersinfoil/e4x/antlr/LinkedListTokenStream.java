@@ -287,4 +287,8 @@ public class LinkedListTokenStream implements TokenStream  {
 		}
 		return i;
 	}
+
+    public String getSourceName() {
+        return tokenSource.getSourceName();
+    }
 }
