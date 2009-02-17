@@ -6,6 +6,8 @@ package uk.co.badgersinfoil.e4x.antlr;
 
 import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.Token;
+import org.antlr.runtime.TokenStream;
+import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.BaseTreeAdaptor;
 import org.antlr.runtime.tree.Tree;
 
@@ -102,5 +104,10 @@ public class LinkedListTreeAdaptor extends BaseTreeAdaptor {
         if (parent != null ) {
             ((LinkedListTree)parent).replaceChildren(startChildIndex, stopChildIndex, t);
         }
+    }
+
+    @Override
+    public Object errorNode(TokenStream tokenStream, Token start, Token end, RecognitionException e) {
+        return new LinkedListErrorNode(tokenStream, start, end, e);
     }
 }
