@@ -60,10 +60,14 @@ public class E4XHelper {
         try {
             parser = xmlextParserOn(new StringReader(tail), stream);
         } catch (IOException e) {
-            // TODO: better exception type?
-            throw new RuntimeException(e);
+            throw new RecognitionException();
         }
-        LinkedListTree ast = (LinkedListTree) parser.xmlPrimary().getTree();
+        LinkedListTree ast;
+        try {
+            ast = (LinkedListTree) parser.xmlPrimary().getTree();
+        } catch (MismatchedTokenException mte) {
+            throw new E4XRecognitionException(mte.line, mte.charPositionInLine, "Failed to parse XML, probably malformed");
+        }
         tail = parser.getInputTail();
         // skip over the XML in the original, underlying CharStream
         cs.seek(cs.index() + (initialTailLength - tail.length()));
